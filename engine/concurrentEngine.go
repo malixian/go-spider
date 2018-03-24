@@ -1,6 +1,8 @@
 package engine
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // 程序的设计准则，自顶向下， 可以先定义Scheduler的接口，再去实现
 type ConcurrentEngine struct {
@@ -10,20 +12,20 @@ type ConcurrentEngine struct {
 
 type Scheduler interface{
 	Submit(Request)
-	ConfigChannelMasterWorkerChan(chan Request)
+	WorkerReady(chan Request)
+	Run()
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request){
-	in := make(chan Request)
 	out := make(chan ParseResult)
-	e.Scheduler.ConfigChannelMasterWorkerChan(in)
-
+	e.Scheduler.Run()
+	for i := 0; i < e.WorkerCount; i++{
+		createWorker(out, e.Scheduler)
+	}
 	for _,r := range seeds{
 		e.Scheduler.Submit(r)
 	}
-	for i := 0; i < e.WorkerCount; i++{
-		createWorker(in ,out)
-	}
+
 	for{
 		result := <-out
 		for _, request := range result.Requests{
@@ -38,9 +40,11 @@ func (e *ConcurrentEngine) Run(seeds ...Request){
 }
 
 
-func createWorker(in chan Request, out chan ParseResult){
+func createWorker(out chan ParseResult, s Scheduler){
+	in := make(chan Request)
 	go func() {
 		for{
+			s.WorkerReady(in)
 			r := <-in
 			parseResult,err := Worker(r)
 			if err != nil{

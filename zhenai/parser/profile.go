@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"testGo/crawl/engine"
+
 	"regexp"
-	"testGo/crawl/model"
+	"go-spider/engine"
+	"go-spider/model"
 )
 
 const ageRe = `<td><span class="label">年龄：</span>(.*?)</td>`

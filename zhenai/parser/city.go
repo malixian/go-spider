@@ -1,8 +1,8 @@
 package parser
 
 import (
-	"testGo/crawl/engine"
 	"regexp"
+	"go-spider/engine"
 )
 
 const userRe = `<th><a href="(http://album.zhenai.com/u/[0-9]+)" target="_blank">([^<]*)</a></th>`
