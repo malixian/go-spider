@@ -7,7 +7,13 @@ type Request struct {
 
 type ParseResult struct {
 	Requests []Request
-	Items []interface{}
+	Items []Item
+}
+type Item struct {
+	Url string
+	Id  string
+	Type string // 每一个网站对应es里面的type
+	PayLoad interface{}
 }
 
 func NilPaser([] byte) ParseResult{

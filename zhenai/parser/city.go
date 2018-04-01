@@ -3,6 +3,7 @@ package parser
 import (
 	"regexp"
 	"go-spider/engine"
+	"log"
 )
 
 const userRe = `<th><a href="(http://album.zhenai.com/u/[0-9]+)" target="_blank">([^<]*)</a></th>`
@@ -17,10 +18,10 @@ func ParseCity(contents []byte) engine.ParseResult{
 		name := string(m[2])
 		request.Requests = append(request.Requests,
 			engine.Request{string(m[1]),func(content []byte) engine.ParseResult{
-				return ParseProfile(content, name)
+				return ParseProfile(content,string(m[1]), name)
 			},
 		})
-		request.Items = append(request.Items, name)
+		log.Printf(name)
 	}
 	return request
 }

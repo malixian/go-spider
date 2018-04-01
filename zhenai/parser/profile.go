@@ -13,22 +13,25 @@ const incomeRe= `<td><span class="label">月收入：</span>(.*?)</td>`
 const marryRe = `<td><span class="label">婚况：</span>(.*?)</td>`
 const educationRe = `<td><span class="label">学历：</span>(.*?)</td>`
 const workLocationRe = `<td><span class="label">工作地：</span>(.*?)</td>`
+const idRe = `http://album.zhenai.com/u/([\d]+)`
 var ageCom = regexp.MustCompile(ageRe)
 var heighCom = regexp.MustCompile(heighRe)
 var incomeCom = regexp.MustCompile(incomeRe)
 var marryCom = regexp.MustCompile(marryRe)
 var educationCom = regexp.MustCompile(educationRe)
 var workLocationCom = regexp.MustCompile(workLocationRe)
+var idCom = regexp.MustCompile(idRe)
 
 
 
-func ParseProfile(contents []byte, name string) engine.ParseResult{
+func ParseProfile(contents []byte,url string, name string) engine.ParseResult{
 	age := extractString(contents, ageCom)
 	heigh := extractString(contents, heighCom)
 	income := extractString(contents, incomeCom)
 	marry := extractString(contents, marryCom)
 	education := extractString(contents, educationCom)
 	workLocation := extractString(contents, workLocationCom)
+	id := extractString(contents, idCom)
 	var profile model.Profile
 	profile.Name = name
 	profile.Age = age
@@ -37,7 +40,8 @@ func ParseProfile(contents []byte, name string) engine.ParseResult{
 	profile.Marry = marry
 	profile.Education = education
 	profile.WorkLocation = workLocation
-	res := engine.ParseResult{Items: []interface{}{profile}}
+	item := engine.Item{url,id,"zhenai",profile}
+	res := engine.ParseResult{Items: []engine.Item{item}}
 	return res
 }
 

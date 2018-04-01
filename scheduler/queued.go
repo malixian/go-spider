@@ -17,11 +17,16 @@ func (s *QueuedScheduler) WorkerReady( w chan engine.Request){
 	s.workerChan <- w
 }
 
+func (s *QueuedScheduler) WorkChan() chan engine.Request{
+	return make(chan engine.Request)
+}
+
 
 func (s *QueuedScheduler) Run(){
 	go func() {
 		s.workerChan = make(chan chan engine.Request)
 		s.requestChannel = make(chan engine.Request)
+		// 通过队列来保存goroutine 从channel取出来的东西，而不采用带缓存的channel
 		var requestQ []engine.Request
 		var workerQ []chan engine.Request
 		for{
